@@ -70,6 +70,3 @@ u = newton_krylov(F, DF, uinit, tol, maxit, KSM);
 
 mesh( reshape(x,nx,nx), reshape(y,nx,nx), reshape(u,nx,nx) );
 
-
-
-
