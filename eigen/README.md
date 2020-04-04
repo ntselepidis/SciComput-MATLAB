@@ -1,12 +1,12 @@
 # Eigenvalue Computations
 ### Main Scripts
-* `ex_ql_iter.m:`
-* `ex_svd.m:`
+* `ql_iter_demo.m:` QL iteration demo
+* `svd_demo.m:` Singular value decomposition demo
 ### Utility Functions
-* `gs.m:`
-* `house_qr.m:`
-* `power_method_2.m:`
-* `power_method.m:`
-* `ql_iter.m:`
-* `qr_iter.m:`
-* `rayleigh.m:`
+* `gs.m:` Gram-Schmidt orthogonalization
+* `house_qr.m:` QR decomposition based on Householder reflections
+* `power_method.m:` Power method (termination criterion based on relative change in lambda)
+* `power_method_2.m:` Power method (termination criterion based on relative residual)
+* `ql_iter.m:` QL iteration
+* `qr_iter.m:` QR iteration
+* `rayleigh.m:` Rayleigh quotient iteration
