@@ -28,6 +28,3 @@ figure, mesh( reshape(u2, m-1, m-1) ), title('9-point molecule');
 
 % figure, spy(A1), title('5-point molecule');
 % figure, spy(A2), title('9-point molecule');
-
-
-
