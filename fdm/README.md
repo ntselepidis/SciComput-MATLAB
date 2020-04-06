@@ -10,5 +10,9 @@
 * `nine_point.m:` Creates coefficient matrix representing the 9-point stencil (2D case)
 * `poisson3D.m:` Creates coefficient matrix representing the 7-point stencil (3D case)
 * `convdiff.m:` Creates a simple convection-diffusion matrix for the 2D or 3D case
-* `convdiff2D.m:` Creates a more complex convection-diffusion matrix for the 2D case
-* `convdiff3D.m:` Creates a more complex convection-diffusion matrix for the 3D case
+* `convdiff2D.m:` Creates a more complex convection-diffusion matrix for the 2D case (see reference [paper](https://hal.inria.fr/inria-00466828))
+* `convdiff3D.m:` Creates a more complex convection-diffusion matrix for the 3D case (see reference [paper](https://hal.inria.fr/inria-00466828))
+
+#### Reference
+> Giraud, L., Haidar, A. and Saad, Y., 2010. Sparse approximations of the Schur complement for parallel algebraic hybrid linear solvers in 3D. 
+[paper link](https://hal.inria.fr/inria-00466828)
