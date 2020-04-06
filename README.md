@@ -15,6 +15,10 @@ The folder structure of this repository is the following:
 ### Documentation
 In each folder there is a separate README describing the use of every script / function in that folder.  
 Also, in the doc [A Study of Advanced Computational Methods.pdf](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf), there are various related analyses and results.  
-### Setup
+### Installation
 First, install the METIS graph partitioning tool from [here](https://github.com/YingzhouLi/metismex).  
-Then, run the `set_path.m` script to add METIS as well as all the folders of this repository in the MATLAB path.  
+Then, download the Scientific Computing Toolbox, by running the command:
+```bash
+git clone https://github.com/ntselepidis/SciComput-MATLAB.git # Download Toolbox
+``` 
+And finally, set the MATLAB path by executing the `set_path.m` script.
