@@ -23,7 +23,7 @@
 #### Preconditioner Application Functions
 * `blkjac.m:` Block Jacobi preconditioner
 * `mti_prec.m:` Modified Tearing and Interconnecting (MTI) preconditioner (see reference [paper](https://link.springer.com/article/10.1007/s11075-018-0628-6))
-* `rasprec.m:` Restricted additive Schwarz (RAS) preconditioner (see reference [paper link](https://epubs.siam.org/doi/abs/10.1137/S106482759732678X))
+* `rasprec.m:` Restricted additive Schwarz (RAS) preconditioner (see reference [paper](https://epubs.siam.org/doi/abs/10.1137/S106482759732678X))
 * `schuras.m:` Additive Schwarz preconditioner for the Schur complement linear system (see reference [paper](https://hal.inria.fr/inria-00466828))
 #### Coarse Spaces for Two-Level DDMs
 * `aggregate.m:` Computes restriction matrix for Nicolaides coarse space
