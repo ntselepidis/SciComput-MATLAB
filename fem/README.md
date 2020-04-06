@@ -7,7 +7,7 @@
 * `fem_helmholtz.m:` Benchmarks various **Krylov subspace methods** combined with **Jacobi**, **Gauss-Seidel**, and **Symmetric Gauss-Seidel** preconditioners on the **2D Helmholtz** equation, discretized on a square domain using **triangular** or **square** finite elements (see chapter 2 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
 #### FEM + Domain Decomposition Method on an L-shaped domain
 * `lshape_ddm.m:` Solves the **2D Helmholtz** equation on an L-shaped domain using the **Schur complement method**
-* `lshape_ddm2.m:` Solves the **2D Helmholtz** equation on an L-shaped domain using the **Schur complement method** combined with **SPAI** and **ILU** preconditioners for the interface problem (see chapter 4 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
+* `lshape_ddm2.m:` Solves the **2D Helmholtz** equation on an L-shaped domain using the **Schur complement method** combined with **SPAI** and **iLU** preconditioners for the interface problem (see chapter 4 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
 #### FEM + Advanced Domain Decomposition Methods
 * `helm_ras.m:` One-level and two-level **RAS** for solving the **2D Helmholtz** equation on a square domain using **triangular** or **square** finite elements
 * `helm_feti.m:` Simple **FETI** implementation for solving the **2D Helmholtz** equation on a square or L-shaped domain using **triangular** or **square** finite elements
