@@ -1,21 +1,27 @@
-# Finite Element Method
+# Finite Element Method (FEM)
 ### Main Scripts
-* `fem3.m:` Solves 2D Helmholtz equation on a square domain using triangular finite elements
-* `fem4.m:` Solves 2D Helmholtz equation on a square domain using square finite elements
-* `fem_helmholtz.m:` Solves 2D Helmholtz equation on a square domain using triangular or square finite elements, and benchmarks various Krylov solvers combined with Jacobi, Gauss-Seidel, and Symmetric Gauss-Seidel preconditioners (see chapter 2 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
-* `helm_feti.m:` Simple FETI implementation for solving the 2D Helmholtz equation on a square or L-shaped domain using triangular or square finite elements
-* `helm_ras.m:` One-level and two-level RAS for solving the 2D Helmholtz equation on a square domain using triangular or square finite elements
-* `lshape_ddm2.m:`
-* `lshape_ddm.m:`
-* `lshape_elasticity.m:`
+#### Base FEM Solution Scripts
+* `fem3.m:` Solves **2D Helmholtz** equation on a square domain using **triangular** finite elements
+* `fem4.m:` Solves **2D Helmholtz** equation on a square domain using **square** finite elements
+#### FEM + Preconditioned Krylov Subspace Method Comparisons
+* `fem_helmholtz.m:` Solves **2D Helmholtz** equation on a square domain using **triangular** or **square** finite elements, and benchmarks various **Krylov subspace methods** combined with **Jacobi**, **Gauss-Seidel**, and **Symmetric Gauss-Seidel** preconditioners (see chapter 2 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
+#### FEM + Domain Decomposition Method on an L-shaped domain
+* `lshape_ddm.m:` Solves **2D Helmholtz** equation on an L-shaped domain using **Schur complement method**
+* `lshape_ddm2.m:` Solves **2D Helmholtz** equation on an L-shaped domain using **Schur complement method** combined with **SPAI** and **ILU** preconditioners for the interface problem (see chapter 4 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
+
+#### FEM + Advanced Domain Decomposition Methods
+* `helm_ras.m:` One-level and two-level **RAS** for solving the **2D Helmholtz** equation on a square domain using **triangular** or **square** finite elements
+* `helm_feti.m:` Simple **FETI** implementation for solving the **2D Helmholtz** equation on a square or L-shaped domain using **triangular** or **square** finite elements
+#### Vector FEM for Elasticity + RAS
+* `lshape_elasticity.m:` Solves **elasticity** problem using **vector FEM** and **RAS** with coarse spaces (see chapter 6 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
 ### Utility Scripts
-* `integrals_qfem.m:`
-* `integrals_tfem.m:`
+* `integrals_tfem.m:` Symbolically computes integrals for use in FEM with **triangular** elements
+* `integrals_qfem.m:` Symbolically computes integrals for use in FEM with **square** elements
 ### Utility Functions
-* `LinearTriangleElementStiffness.m:`
-* `lshape_fem_2.m:`
-* `lshape_fem.m:`
-* `qfem_assemble.m:`
-* `qfem.m:`
-* `tfem_assemble.m:`
-* `tfem.m:`
+* `tfem.m:` Computes the coordinate and connectivity matrix for the discretization of a square domain using **triangular** finite elements
+* `tfem_assemble.m:` Assembles the linear system given the coordinate and connectivity matrices for the case of **triangular** finite elements
+* `qfem.m:` Computes the coordinate and connectivity matrix for the discretization of a square domain using **square** finite elements
+* `qfem_assemble.m:` Assembles the linear system given the coordinate and connectivity matrices for the case of **square** finite elements
+* `lshape_fem.m:` Creates the coordinate and connectivity matrix representing the FEM discretization of an L-shaped domain given the discretization of a square domain
+* `lshape_fem_2.m:` Creates the coordinate and connectivity matrix representing the FEM discretization of an L-shaped domain given the discretization of a square domain
+* `LinearTriangleElementStiffness.m:` Computes stiffness matrices for solving the elasticity problem with vector FEM
