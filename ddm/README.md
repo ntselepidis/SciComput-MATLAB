@@ -39,7 +39,7 @@
 > Tselepidis, N.A., Filelis-Papadopoulos, C.K. and Gravvanis, G.A., 2019. Distributed algebraic tearing and interconnecting techniques. Numerical Algorithms, 82(3), pp.809-842.
 [paper link](https://link.springer.com/article/10.1007/s11075-018-0628-6)
 
-> Cai, X.C. and Sarkis, M., 1999. A restricted additive Schwarz preconditioner for general sparse linear systems. Siam journal on scientific computing, 21(2), pp.792-797.
+> Cai, X.C. and Sarkis, M., 1999. A restricted additive Schwarz preconditioner for general sparse linear systems. SIAM Journal on Scientific Computing, 21(2), pp.792-797.
 [paper link](https://epubs.siam.org/doi/abs/10.1137/S106482759732678X)
 
 > Giraud, L., Haidar, A. and Saad, Y., 2010. Sparse approximations of the Schur complement for parallel algebraic hybrid linear solvers in 3D. 
