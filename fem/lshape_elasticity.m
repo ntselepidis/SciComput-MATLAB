@@ -91,8 +91,8 @@ disp('Matrix Assembly - Done');
 
 ind = setdiff(1:length(A),bounds); % all dofs appart from boundaries
 
-bnd=[west1 west3];    % bound points
-inn=setdiff(1:n,bnd); % inner points
+bnd = [west1 west3];    % bound points
+inn = setdiff(1:n,bnd); % inner points
 
 u = zeros(length(A),1); % allocate solution vector and fill with zeros
 
@@ -138,21 +138,21 @@ u(ind) = bicgstab( AA, bb, tol, maxit, ...
 
 % ------------------------------------------------------------------------
 
-ux=u( ind(1:2:end) ); % x component of u (active dofs)
-uy=u( ind(2:2:end) ); % y component of u (active dofs)
+ux = u( ind(1:2:end) ); % x component of u (active dofs)
+uy = u( ind(2:2:end) ); % y component of u (active dofs)
 
-% bnd=[west1 west3];    % bound points
-% inn=setdiff(1:n,bnd); % inner points
+% bnd = [west1 west3];    % bound points
+% inn = setdiff(1:n,bnd); % inner points
 
-f=A*u;         % compute forces
-fx=f(2*bnd-1); % x component of f on bounds
-fy=f(2*bnd);   % y component of f on bounds
+f = A*u;         % compute forces
+fx = f(2*bnd-1); % x component of f on bounds
+fy = f(2*bnd);   % y component of f on bounds
 
 % plot solution
 inc = 0.05;
 figure, hold on, 
-quiver(coo(inn,1),coo(inn,2),ux,uy,'b');
-quiver(coo(bnd,1),coo(bnd,2),fx,fy,'r');
+quiver(coo(inn,1), coo(inn,2), ux, uy, 'b');
+quiver(coo(bnd,1), coo(bnd,2), fx, fy, 'r');
 axis([x0-inc 2*x1+inc x0-inc 2*x1+inc]);
 axis square; grid; xlabel('x'); ylabel('y');
 title('displacements and bound reactions');
