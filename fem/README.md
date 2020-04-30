@@ -13,10 +13,7 @@
 * `helm_feti.m:` Simple **FETI** implementation for solving the **2D Helmholtz** equation on a square or L-shaped domain using **triangular** or **square** FEs
 #### Vector FEM for Elasticity + RAS
 * `lshape_elasticity.m:` Solves an **elasticity** problem using **vector FEM** and **RAS** with coarse spaces (see chapter 6 in [doc](https://github.com/ntselepidis/SciComput-MATLAB/blob/master/A%20Study%20of%20Advanced%20Computational%20Methods.pdf) for more details)
-### Utility Scripts
-* `tfem_integrals.m:` Symbolically computes the **integrals** for use in FEM with **triangular** elements
-* `qfem_integrals.m:` Symbolically computes the **integrals** for use in FEM with **square** elements
-### Utility Functions
+### Utility Functions and Scripts
 #### FEM Discretization Functions - Coordinate (COO) and Connectivity (CON) Matrix Computation
 * `tfem_discretize.m:` Computes the COO and CON matrices for the discretization of a **square domain** using **triangular** FEs
 * `qfem_discretize.m:` Computes the COO and CON matrices for the discretization of a **square domain** using **square** FEs
@@ -25,4 +22,9 @@
 #### FEM Linear System Setup Functions
 * `tfem_assemble.m:` Sets up the **linear system** given the COO and CON matrices for the case of **triangular** FEs
 * `qfem_assemble.m:` Sets up the **linear system** given the COO and CON matrices for the case of **square** FEs
+* `tfem_stiffness.m:` Computes **stiffness matrices** for solving  the **2D Helmholtz** equation using **triangular** FEs
+* `qfem_stiffness.m:` Computes **stiffness matrices** for solving  the **2D Helmholtz** equation using **square** FEs
 * `LinearTriangleElementStiffness.m:` Computes **stiffness matrices** for solving the **elasticity** problem using **vector FEM**
+#### FEM Integral Computation Scripts
+* `tfem_integrals.m:` Symbolically computes the **integrals** for use in FEM with **triangular** elements
+* `qfem_integrals.m:` Symbolically computes the **integrals** for use in FEM with **square** elements
