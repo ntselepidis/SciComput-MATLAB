@@ -1,4 +1,4 @@
-function [h, ne, n, coo, con, bounds] = tfem(a, b, m)
+function [h, ne, n, coo, con, bounds] = tfem_discretize(a, b, m)
 h = (b-a)/m;        % mesh size
 ne = 2*m^2;         % number of elements (triangles)
 n = (m+1)^2;        % number of vertices

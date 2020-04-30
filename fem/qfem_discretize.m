@@ -1,4 +1,4 @@
-function [h, ne, n, coo, con, bounds] = qfem(a, b, m)
+function [h, ne, n, coo, con, bounds] = qfem_discretize(a, b, m)
 h = (b-a)/m;        % mesh size
 ne = m^2;           % number of elements (squares)
 n = (m+1)^2;        % number of vertices

@@ -8,10 +8,10 @@ Nmax = 1000;
 restart = [10 20 40 80];
 fem_type = 1; % choose 0 for triangles or 1 for squares
 if ( fem_type )
-    [h, ne, n, coo, con, bounds] = qfem(a, b, m);
+    [h, ne, n, coo, con, bounds] = qfem_discretize(a, b, m);
     [A, b] = qfem_assemble(coo, con, f);
 else
-    [h, ne, n, coo, con, bounds] = tfem(a, b, m);
+    [h, ne, n, coo, con, bounds] = tfem_discretize(a, b, m);
     [A, b] = tfem_assemble(coo, con, f);
 end
 bounds = [1:(m+1) (m+2):(m+1):((m+1)^2-m)]; % Dirichlet(0) on NE

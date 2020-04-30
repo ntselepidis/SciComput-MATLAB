@@ -10,10 +10,10 @@ nbasis = 4;
 fem_type = 0; % choose 0 for triangles or 1 for squares
 
 if ( fem_type )
-    [h, ne, n, coo, con, bounds] = qfem(a, b, m);
+    [h, ne, n, coo, con, bounds] = qfem_discretize(a, b, m);
     [A, b] = qfem_assemble(coo, con, f);
 else
-    [h, ne, n, coo, con, bounds] = tfem(a, b, m);
+    [h, ne, n, coo, con, bounds] = tfem_discretize(a, b, m);
     [A, b] = tfem_assemble(coo, con, f);
 end
 

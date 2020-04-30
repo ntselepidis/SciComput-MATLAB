@@ -4,9 +4,9 @@ rng(0); % used for reproducibility
 m = 64; % number of subintervals per dimension (per square domain)
 fem_type = 0; % 0 for triangle and 1 for square
 if ( fem_type )
-    [h, ne, n, coo1, con1, bounds1] = qfem(a, b, m);
+    [h, ne, n, coo1, con1, bounds1] = qfem_discretize(a, b, m);
 else
-    [h, ne, n, coo1, con1, bounds1] = tfem(a, b, m);
+    [h, ne, n, coo1, con1, bounds1] = tfem_discretize(a, b, m);
 end
 [coo, con, bounds, ~, ~] = get_lshape_from_square(a, b, m, coo1, con1);
 

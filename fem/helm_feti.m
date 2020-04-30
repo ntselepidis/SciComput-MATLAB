@@ -10,9 +10,9 @@ lshape = 1;   % 0 -> square domain, 1-> L-shape domain
 
 % discretize domain
 if ( fem_type )
-    [h, ne, n, coo, con, bounds] = qfem(a, b, m);
+    [h, ne, n, coo, con, bounds] = qfem_discretize(a, b, m);
 else
-    [h, ne, n, coo, con, bounds] = tfem(a, b, m);
+    [h, ne, n, coo, con, bounds] = tfem_discretize(a, b, m);
 end
 
 if ( lshape )

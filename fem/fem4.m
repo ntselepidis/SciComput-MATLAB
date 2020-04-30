@@ -1,7 +1,7 @@
 clear; clc; close all;
 [a, b] = deal(-1, 1);
 m = 64; % number of subintervals per dimension
-[h, ne, n, coo, con, bounds] = qfem(a, b, m);
+[h, ne, n, coo, con, bounds] = qfem_discretize(a, b, m);
 bounds = [1:(m+1) (m+2):(m+1):((m+1)^2-m)]; % Dirichlet (0) on SW bounds, Neumann (0) elsewhere
 f = 5e8;
 c = 3e8;
