@@ -19,7 +19,7 @@ P  = 12.5;    % concentrated load
 p  = 1;       % plane stress
 
 [h,ne,n,coo,con,bounds] = tfem(x0,x1,m);
-[coo,con,bounds,sep,dpnts] = lshape_fem_2(x0,x1,m,coo,con);
+[coo,con,bounds,sep,dpnts] = get_lshape_from_square_2(x0,x1,m,coo,con);
 ne = size(con,1);
 n  = size(coo,1);
 

@@ -7,7 +7,7 @@ if ( fem_type )
 else
     [h, ne, n, coo1, con1, bounds1] = tfem(a, b, m);
 end
-[coo, con, bounds, sep, dpnts] = lshape_fem(a, b, m, coo1, con1);
+[coo, con, bounds, sep, dpnts] = get_lshape_from_square(a, b, m, coo1, con1);
 
 figure, 
 plot(coo(:,1), coo(:,2), '*', ...

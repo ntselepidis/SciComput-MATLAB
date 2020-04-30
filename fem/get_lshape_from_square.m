@@ -1,4 +1,4 @@
-function [coo, con, bounds, sep, dpnts] = lshape_fem(a, b, m, coo1, con1)
+function [coo, con, bounds, sep, dpnts] = get_lshape_from_square(a, b, m, coo1, con1)
 
 n = (m+1)^2;
 coo2 = zeros(size(coo1)); con2 = zeros(size(con1)); nodes2 = zeros(1,n);

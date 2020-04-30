@@ -8,7 +8,7 @@ if ( fem_type )
 else
     [h, ne, n, coo1, con1, bounds1] = tfem(a, b, m);
 end
-[coo, con, bounds, ~, ~] = lshape_fem(a, b, m, coo1, con1);
+[coo, con, bounds, ~, ~] = get_lshape_from_square(a, b, m, coo1, con1);
 
 f = 0; % Helmholtz -> Poisson
 if (fem_type)

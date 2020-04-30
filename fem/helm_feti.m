@@ -16,7 +16,7 @@ else
 end
 
 if ( lshape )
-    [coo, con, bounds, ~, ~] = lshape_fem(a, b, m, coo, con);
+    [coo, con, bounds, ~, ~] = get_lshape_from_square(a, b, m, coo, con);
     ne = size(con,1);
 end
 
