@@ -5,7 +5,7 @@ function y = Smultx(x, SC)
     ndoms = length(L);
 
     y = Aoo*x;
-    for i=1:ndoms
+    for i = 1 : ndoms
         y = y - Aoi{i} * sp_solve( L{i}, U{i}, P{i}, Q{i}, Aio{i} * x ); 
     end
     

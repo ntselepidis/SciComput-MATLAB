@@ -1,9 +1,9 @@
-function SC = sc_prep(A,In,Out)
+function SC = sc_prep(A, In, Out)
 ndoms = length(In);
 out = horzcat(Out{:});
 Aoo = A(out,out); 
 [Aio, Aoi, L, U, P, Q] = deal( cell(ndoms,1) );
-for i=1:ndoms
+for i = 1 : ndoms
     inn = In{i};
     Aio{i} = A(inn,out);
     Aoi{i} = A(out,inn);

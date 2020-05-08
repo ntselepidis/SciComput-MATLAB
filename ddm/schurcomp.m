@@ -14,7 +14,7 @@ b = A*ex;
 
 % Graph Partitioning
 G = 0.5*(abs(A)+abs(A)'); % undirected graph
-map = PartSparseMat(G,ndoms);
+map = PartSparseMat(G, ndoms);
 ndoms = max(map);
 
 % Classify subdomain components into inner and outer points 
@@ -25,12 +25,12 @@ ndoms = max(map);
 % --------------------------------------------------------------------- %
 
 % Schur Complement Method Preprocessing
-SC = sc_prep(A,In,Out);
+SC = sc_prep(A, In, Out);
 
 % Schur Complement Block Jacobi Setup
-SBJ = scbj_prep(A,SC);
+SBJ = scbj_prep(A, SC);
 
-[out,L,U,P,Q,Aio,Aoo] = deal(SC.out,SC.L,SC.U,SC.P,SC.Q,SC.Aio,SC.Aoo);
+[out, L, U, P, Q, Aio, Aoo] = deal(SC.out, SC.L, SC.U, SC.P, SC.Q, SC.Aio, SC.Aoo);
 
 % --------------------------------------------------------------------- %
 % ---------------------- Overlap Visualization ------------------------ %
@@ -74,7 +74,7 @@ ilu_setup.thresh = 1;
 
 s_droptol = 1e-2;
 
-AS = scas_prep(A,SC,overlap,s_droptol,ilu_setup);
+AS = scas_prep(A, SC, overlap, s_droptol, ilu_setup);
 
 x = zeros(n,1);
 

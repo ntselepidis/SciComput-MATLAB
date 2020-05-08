@@ -5,7 +5,7 @@ function g = Srhs(b, SC)
     ndoms = length(L);
 
     g = b(out);
-    for i=1:ndoms
+    for i = 1 : ndoms
         g = g - Aoi{i} * sp_solve( L{i}, U{i}, P{i}, Q{i}, b(In{i}) ); 
     end
     

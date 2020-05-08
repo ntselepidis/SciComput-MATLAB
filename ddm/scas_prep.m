@@ -1,4 +1,4 @@
-function AS = scas_prep(A,SC,overlap,s_droptol,ilu_setup)
+function AS = scas_prep(A, SC, overlap, s_droptol, ilu_setup)
 
 if nargin == 4
     inc = 0;
@@ -9,7 +9,7 @@ else
 end
 
 % ATTENTION : ONLY ONE-LEVEL OVERLAP IS CURRENTLY SUPPORTED
-[In,Out,L,U,P,Q] = deal(SC.In,SC.Out,SC.L,SC.U,SC.P,SC.Q);
+[In, Out, L, U, P, Q] = deal(SC.In, SC.Out, SC.L, SC.U, SC.P, SC.Q);
 ndoms = length(In);
 [S, Ls, Us, Ps, Qs, T] = deal( cell(ndoms,1) );
 for i=1:ndoms
@@ -29,8 +29,8 @@ for i=1:ndoms
     D = abs(diag(S{i}));
     
     if ( s_droptol ~= 0 )
-        for r=1:size(S{i},1)
-            for c=1:size(S{i},2)
+        for r = 1 : size(S{i},1)
+            for c = 1 : size(S{i},2)
                 if ( abs(S{i}(r,c)) <= s_droptol * (D(r)+D(c)) )
                     S{i}(r,c) = 0;
                 end
@@ -46,7 +46,7 @@ AS.T = T;
 % MASKING OVERLAP BASED ON OUTER POINTS (ONLY FOR DELTA = 1)
 out = horzcat(Out{:});
 mask( out ) = 1 : length(out);
-for i=1:ndoms
+for i = 1 : ndoms
     overlap{i} = mask( overlap{i} );
 end
 AS.overlap = overlap;

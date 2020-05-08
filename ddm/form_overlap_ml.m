@@ -1,20 +1,20 @@
-function overlap = form_overlap_ml(G,In,Out,delta)
+function overlap = form_overlap_ml(G, In, Out, delta)
 
     n       = length(G);
     ndoms   = length(Out);
-    overlap = cell(ndoms,1);
+    overlap = cell(ndoms, 1);
 
-    for i=1:ndoms
-        v = zeros(n,1);
+    for i = 1 : ndoms
+        v = zeros(n, 1);
         v( Out{i} ) = 1;
-        for lev=1:delta
+        for lev = 1 : delta
             ovpnts = find( v == lev );
-            for j=1:length(ovpnts)
+            for j = 1 : length(ovpnts)
                 pnt = ovpnts(j);
                 nbr = find( G(:,pnt) );
                 v(nbr) = lev + 1;
             end
-            if (lev==1)
+            if ( lev == 1 )
                 v( In{i} ) = 0;
             end
         end
