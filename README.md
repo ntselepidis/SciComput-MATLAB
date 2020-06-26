@@ -8,6 +8,7 @@ SciComput-MATLAB
 ├── eigen                <-- Eigenvalue Computations
 ├── fdm                  <-- Finite Difference Method
 ├── fem                  <-- Finite Element Method
+├── integration          <-- Numerical Integration Methods
 ├── meshless             <-- Meshless Method
 ├── multigrid            <-- Multigrid Method
 ├── newton_krylov        <-- Newton-Krylov Method
