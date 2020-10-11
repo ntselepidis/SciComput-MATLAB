@@ -1,4 +1,4 @@
-function alpha = nystrom_solve(X, t, m, sigma, k, compute_error)
+function alpha = nystrom_solve(t, sigma, Lambda, U)
 %NYSTROM_SOLVE Solves (K + sigma I) a = t.
 %
 %   Reference Paper:
@@ -9,33 +9,12 @@ function alpha = nystrom_solve(X, t, m, sigma, k, compute_error)
 %
 %   https://papers.nips.cc/paper/1866-using-the-nystrom-method-to-speed-up-kernel-machines.pdf
 %
-    if nargin < 6
-        compute_error = false;
-    end
-
-    n = size(X, 1);
-
-    % Compute reduced kernel matrix
-    Knm = k(X, X(1:m,:));
-
-    % Compute eigen-decomposition (see eq. (7))
-    [U_m, Lambda_m] = eig(Knm(1:m, :), 'vector');
-
-    % Compute approximate eigenvalues (see eq. (8))
-    Lambda = (n / m) * Lambda_m;
-
-    % Compute approximate eigenvectors (see eq. (9))
-    U = sqrt(m / n) * Knm * (U_m ./ Lambda_m');
-
+    
     % Solve linear system (see eq. (11))
     y = Lambda .* (U' * t);
-    z = (Lambda .* (U' * U) + sigma * speye(m, m)) \ y;
+
+    z = (Lambda .* (U' * U) + sigma * speye(length(Lambda))) \ y;
+
     alpha = (1.0 / sigma) * (t - U * z);
 
-    if compute_error
-        % Compute full kernel matrix
-        Knn = k(X, X);
-        alpha_true = (Knn + sigma * speye(n,n)) \ t;
-        disp(norm(alpha - alpha_true) / norm(alpha_true));
-    end
 end
