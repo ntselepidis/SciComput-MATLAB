@@ -15,11 +15,8 @@ function alpha = nystrom_solve(X, t, m, sigma, k, compute_error)
 
     n = size(X, 1);
 
-    % Randomly shuffle X
-    Xp = X(randperm(n), :);
-
     % Compute reduced kernel matrix
-    Knm = k(Xp, Xp(1:m,:));
+    Knm = k(X, X(1:m,:));
 
     % Compute eigen-decomposition (see eq. (7))
     [U_m, Lambda_m] = eig(Knm(1:m, :), 'vector');
@@ -37,7 +34,7 @@ function alpha = nystrom_solve(X, t, m, sigma, k, compute_error)
 
     if compute_error
         % Compute full kernel matrix
-        Knn = k(Xp, Xp);
+        Knn = k(X, X);
         alpha_true = (Knn + sigma * speye(n,n)) \ t;
         disp(norm(alpha - alpha_true) / norm(alpha_true));
     end
