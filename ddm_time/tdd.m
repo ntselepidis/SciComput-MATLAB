@@ -87,9 +87,9 @@ u = zeros( length(K), 1 );
 for i=1:nT
 
     % Solve interface problem
-    u(out) = pbicgstab2(@(x) Smultx(x,SC), Srhs(f,SC), tol, maxit, @(x) blkjac(x,SBJ));
-%     u(out) = pbicgstab2(@(x) Smultx(x,SC), Srhs(f,SC), tol, maxit, @(x) blkjac(x,SBJ) + V'*(VKV\(V*x)) );
-%     u(out) = pbicgstab2(@(x) Smultx(x,SC), Srhs(f,SC), tol, maxit, @(x) blkjac(x,SBJ) + V'*(VSV\(V*x)) );
+    u(out) = pipelined_bicgstab(@(x) Smultx(x,SC), Srhs(f,SC), tol, maxit, @(x) blkjac(x,SBJ));
+%     u(out) = pipelined_bicgstab(@(x) Smultx(x,SC), Srhs(f,SC), tol, maxit, @(x) blkjac(x,SBJ) + V'*(VKV\(V*x)) );
+%     u(out) = pipelined_bicgstab(@(x) Smultx(x,SC), Srhs(f,SC), tol, maxit, @(x) blkjac(x,SBJ) + V'*(VSV\(V*x)) );
 
     % Back substitute to inner dofs
     for j=1:ndoms
