@@ -19,7 +19,7 @@ for i = 1:lev
     n = 2^(lev-i+1)-1;
     T{i} = gallery('tridiag', n)*(n+1)*(n+1);
     A{i} = kron(T{i}, speye(n))+kron(speye(n), T{i});
-    M{i} = make_spai(A{i}, lfill);%diag(A{i});
+    M{i} = spai(A{i}, lfill);%diag(A{i});
     x{i} = zeros(n*n, 1);
     b{i} = zeros(n*n, 1);
 end

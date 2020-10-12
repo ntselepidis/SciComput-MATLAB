@@ -65,7 +65,7 @@ end
 % xout = S\g;
 [L,U] = ilu(S);
 lfill = 1; 
-M = make_spai(S, lfill);
+M = spai(S, lfill);
 xout = bicgstab(S, g, 1e-10, 500);
 xout = bicgstab(S, g, 1e-10, 500, @(y) U\(L\y));
 xout = bicgstab(S, g, 1e-10, 500, @(y) M*y);

@@ -1,4 +1,15 @@
-function M = make_spai(A, lfill)
+function M = spai(A, lfill)
+%SPAI Sparse Approximate Inverse.
+%
+%   Reference Paper:
+%
+%   Grote, M.J. and Huckle, T., 1997.
+%   Parallel preconditioning with sparse approximate inverses.
+%   SIAM Journal on Scientific Computing, 18(3), pp.838-853.
+%
+%   https://epubs.siam.org/doi/abs/10.1137/S1064827594276552?journalCode=sjoce3
+%
+
 n = length(A);
 I = speye(n);
 G = A^lfill; % inefficient, use BFS instead

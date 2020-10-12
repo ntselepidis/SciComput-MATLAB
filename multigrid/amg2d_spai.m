@@ -19,12 +19,12 @@ n = length(A{1});
 b{1} = A{1}*(1:n)';
 x{1} = zeros(n, 1);
 lfill = 1;
-D{1} = make_spai(A{1}, lfill);
+D{1} = spai(A{1}, lfill);
 for i = 2:lev
     R{i-1} = coarsening(A{i-1});
     P{i-1} = R{i-1}';
     A{i} = R{i-1}*A{i-1}*P{i-1};
-    D{i} = make_spai(A{i}, lfill);
+    D{i} = spai(A{i}, lfill);
     x{i} = zeros(length(A{i}), 1);
     b{i} = zeros(length(A{i}), 1);
 end
