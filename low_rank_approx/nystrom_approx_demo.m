@@ -1,38 +1,34 @@
-clear; clc; rng(0);
+clear; clc; close all;
 
-n = 10000;
+n = 10000; % Number of total samples
+m = 100;   % Number of samples to be used in approximation
+kernel = @(x, y) exp(-pdist2(x, y, 'squaredeuclidean')); % Kernel function
+sigma = 0.1; % Jitter factor
+
+% Generate dataset and setup solution of linear system
 X = rand(n, 2);
-t = (1:n)' / n;
-m = 100;
-sigma = 1e-1;
-compute_error = true;
+K = kernel(X, X);
+I = speye(n);
+a = (1:n)' / n;
+t = (K + sigma * I) * a;
 
-% Kernel function
-kernel = @(x, y) exp(-pdist2(x, y, 'squaredeuclidean'));
-
-% Shuffle dataset
+% Generate random permutation to shuffle dataset
 perm = randperm(n);
-Xperm = X(perm, :);
-tperm = t(perm);
 
 % Perform Nystrom preprocessing
-[Lambda, U] = nystrom_prep(Xperm, kernel, m);
+[Lambda, U] = nystrom_prep(X(perm, :), kernel, m);
 
 % Compute Nystrom approximaton
-alpha = nystrom_solve(tperm, sigma, Lambda, U);
+ahat = nystrom_solve(t(perm), sigma, Lambda, U);
 
 % Back-permute solution
-alpha(perm) = alpha;
+ahat(perm) = ahat;
 
-if compute_error
-    
-    % Compute full kernel matrix
-    Knn = kernel(X, X);
+% Compute error of approximation
+relerr = norm(a - ahat) / norm(a)
+relres = norm(t - (K + sigma * I) * ahat) / norm(t)
 
-    % Solve full linear system
-    alpha_true = (Knn + sigma * speye(size(X, 1))) \ t;
-
-    % Compute error of approximation
-    disp(norm(alpha - alpha_true) / norm(alpha_true));
-
-end
+% Plot result
+figure, hold on, grid,
+plot(a, 'b-');
+plot(ahat, 'ro');
