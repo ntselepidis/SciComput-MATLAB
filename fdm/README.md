@@ -3,6 +3,7 @@
 * `elliptic.m:` Solves 2D elliptic PDE using 5-point and 9-point molecule 
 * `parabolic_fw_bw.m:` Solves 1D parabolic PDE using forward or backward scheme
 * `parabolic_cn.m:` Solves 1D parabolic PDE using Crank-Nicolson method
+* `convdiff2d_stencil.m:` Solves 2D convection-diffusion PDE
 * `hyperbolic_explicit.m:` Solves 1D hyperbolic PDE using explicit scheme
 * `hyperbolic_implicit.m:` Solves 1D hyperbolic PDE using implicit scheme
 ### Utility Functions
