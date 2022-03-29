@@ -75,6 +75,13 @@ omega = 0.6376; % BJ+CGC
 %omega = 0.7036; % BJ+CGC
 
 %omega = 2./(maxev + minev);
+
+% add-then-invert (woodbury)
+Vt_vec = full(sum(V', 2));
+Vt_pat = spones(V');
+VAV_zero_diag = VAV - diag(diag(VAV));
+VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
+
 xP = zeros(length(A), 1);
 disp(['omega = ' num2str(omega)])
 for i = 1 : 500
@@ -91,6 +98,8 @@ for i = 1 : 500
     %eP = V'*(VAV\(V*rP));
     eP = blkjac(rP, BJ) + (V'*(VAV\(V*rP)));
     %eP = blkjac(rP, BJ) +  dmp * (V'*(VAV\(V*rP)));
+    %y = blkjac(rP, BJ);
+    %eP = y - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y))), BJ);
     xP = xP + omega * eP;
     %x(perm) = xP;
     %getframe; mesh(reshape(x, nx, nx))
