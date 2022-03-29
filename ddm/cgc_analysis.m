@@ -7,7 +7,7 @@ tol = 1e-10; % Prescribed tolerance
 %nx = 10;
 nx = 32;
 A = gallery('poisson', nx);
-%A = nine_point(nx+1);
+%A = -nine_point(nx+1);
 %A = poisson3D(nx);
 %ex = (1:length(A))'/length(A);
 %b = A*ex;
@@ -33,6 +33,20 @@ bP = b(perm);
 % Nicolaides coarse space for block Jacobi
 V = aggregate(AP, blk);
 VAV = V*AP*V';
+
+%VAV2 = zeros(ndoms, ndoms);
+%for i = 1:ndoms
+%    ii = blk(i):blk(i+1)-1;
+%    for j = 1:ndoms
+%        jj = blk(j):blk(j+1)-1;
+%        VAV2(i,j) = sum(AP(ii,jj), 'all') / (sqrt(length(ii)) * sqrt(length(jj)));
+%    end
+%    Vb(i) = sum(bP(ii), 'all') / sqrt(length(ii));
+%end
+%max(abs(sparse(VAV2) - VAV), [], 'all')
+%max(abs(Vb - V*b), [], 'all')
+%
+%(V*V')
 
 % Preconditioned conjugate gradient on Ax = b, with preconditioner M
 %x = pcg( AP, bP, tol, maxit );                                          % No preconditioner
@@ -60,12 +74,18 @@ omega = 0.6376; % BJ+CGC
 %omega = 1.0880; % BJ
 %omega = 0.7036; % BJ+CGC
 
-%omega = 2./(maxev + minev); TODO(nikolas)
+%omega = 2./(maxev + minev);
 xP = zeros(length(A), 1);
 disp(['omega = ' num2str(omega)])
-for i = 1 : 20
+for i = 1 : 500
     rP = bP - AP*xP;
-    disp([i norm(rP)/norm(bP)])
+    omega = (rP'*rP) / (rP'*AP*rP);
+    relres = norm(rP) / norm(bP);
+    disp([i omega relres])
+    if (relres <= 1e-3)
+        disp(['Converged in ' num2str(i) ' iterations.'])
+        break;
+    end
     %eP = rP;
     %eP = blkjac(rP, BJ);
     %eP = V'*(VAV\(V*rP));
