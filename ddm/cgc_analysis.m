@@ -63,7 +63,7 @@ VAV = V*AP*V';
 % x = x + e
 
 %figure,
-dmp = 0.1;
+dmp = 2;
 % poisson2D(32)
 %omega = 1; % BJ
 omega = 0.6376; % BJ+CGC
@@ -93,6 +93,9 @@ for i = 1 : 500
         disp(['Converged in ' num2str(i) ' iterations.'])
         break;
     end
+    % -------------
+    % Batch update
+    % -------------
     %eP = rP;
     %eP = blkjac(rP, BJ);
     %eP = V'*(VAV\(V*rP));
@@ -101,6 +104,24 @@ for i = 1 : 500
     %y = blkjac(rP, BJ);
     %eP = y - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y))), BJ);
     xP = xP + omega * eP;
+    % -------------
+    % Online update
+    % -------------
+    %xP = xP + omega * V'*(VAV\(V*rP)); % Coarse-space correction
+    %rP = bP - AP*xP;
+    %omega = (rP'*rP) / (rP'*AP*rP);
+    %xP = xP + omega * blkjac(rP, BJ);  % Block Jacobi smoothing
+    %xP = blkgs(xP, BJ, AP, bP);        % Block GS smoothing
+    %rP = bP - AP*xP;
+    %omega = (rP'*rP) / (rP'*AP*rP);
+    %xP = xP + omega * V'*(VAV\(V*rP)); % Coarse-space correction
+    %rP = bP - AP*xP;
+    %omega = (rP'*rP) / (rP'*AP*rP);
+    %xP = xP + omega * blkjac(rP, BJ);  % Block Jacobi smoothing
+    %xP = blkgs(xP, BJ, AP, bP);        % Block GS smoothing
+    % -------------
+    % Visualization
+    % -------------
     %x(perm) = xP;
     %getframe; mesh(reshape(x, nx, nx))
 end
