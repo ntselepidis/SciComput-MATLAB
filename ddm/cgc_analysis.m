@@ -109,6 +109,10 @@ for i = 1 : 500
     %eP = blkjac(rP, BJ) +  dmp * (V'*(VAV\(V*rP)));
     %y = blkjac(rP, BJ);
     %eP = y - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y))), BJ);
+    %omega = (eP'*eP) / (eP'*(AP*blkjac(eP, BJ))); % Block Jacobi
+    %omega = (eP'*eP) / (eP'*(AP*blkjac(P(eP), BJ))); % Block Jacobi + Deflation
+    %omega = (eP'*eP) / (eP'*(AP*P(blkjac(eP, BJ)))); % Block Jacobi + Deflation
+    %omega = (eP'*eP) / (eP'*(AP*(blkjac(eP, BJ) + V'*(VAV\(V*eP))))); % Block Jacobi + CGC
     xP = xP + omega * eP;
     % -------------
     % Online update
