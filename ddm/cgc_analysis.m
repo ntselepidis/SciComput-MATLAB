@@ -59,8 +59,8 @@ VAV = V*AP*V';
 % x = (I-M*A)*x + M*b, alternative formulation
 % here it is written in 3-steps as
 % r = b - A*x
-% e = M*r
-% x = x + e
+% rhat = M*r
+% x = x + omega*rhat
 
 %figure,
 dmp = 2;
@@ -101,19 +101,19 @@ for i = 1 : 500
     % -------------
     % Batch update
     % -------------
-    %eP = rP;
-    %eP = blkjac(rP, BJ);
-    %eP = blkjac(P(rP), BJ); % deflation
-    %eP = V'*(VAV\(V*rP));
-    eP = blkjac(rP, BJ) + (V'*(VAV\(V*rP)));
-    %eP = blkjac(rP, BJ) +  dmp * (V'*(VAV\(V*rP)));
+    %rhatP = rP;
+    %rhatP = blkjac(rP, BJ);
+    %rhatP = blkjac(P(rP), BJ); % deflation
+    %rhatP = V'*(VAV\(V*rP));
+    rhatP = blkjac(rP, BJ) + (V'*(VAV\(V*rP)));
+    %rhatP = blkjac(rP, BJ) +  dmp * (V'*(VAV\(V*rP)));
     %y = blkjac(rP, BJ);
-    %eP = y - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y))), BJ);
-    %omega = (eP'*eP) / (eP'*(AP*blkjac(eP, BJ))); % Block Jacobi
-    %omega = (eP'*eP) / (eP'*(AP*blkjac(P(eP), BJ))); % Block Jacobi + Deflation
-    %omega = (eP'*eP) / (eP'*(AP*P(blkjac(eP, BJ)))); % Block Jacobi + Deflation
-    %omega = (eP'*eP) / (eP'*(AP*(blkjac(eP, BJ) + V'*(VAV\(V*eP))))); % Block Jacobi + CGC
-    xP = xP + omega * eP;
+    %rhatP = y - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y))), BJ);
+    %omega = (rhatP'*rhatP) / (rhatP'*(AP*blkjac(rhatP, BJ))); % Block Jacobi
+    %omega = (rhatP'*rhatP) / (rhatP'*(AP*blkjac(P(rhatP), BJ))); % Block Jacobi + Deflation
+    %omega = (rhatP'*rhatP) / (rhatP'*(AP*P(blkjac(rhatP, BJ)))); % Block Jacobi + Deflation
+    %omega = (rhatP'*rhatP) / (rhatP'*(AP*(blkjac(rhatP, BJ) + V'*(VAV\(V*rhatP))))); % Block Jacobi + CGC
+    xP = xP + omega * rhatP;
     % -------------
     % Online update
     % -------------
