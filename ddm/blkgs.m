@@ -1,4 +1,4 @@
-function xP = blkgs(xP, params, AP, bP)
+function xP = blkgs(xP, params, rPfun)
 
     blk   = params.blk;
     L     = params.L;
@@ -7,7 +7,7 @@ function xP = blkgs(xP, params, AP, bP)
     Q     = params.Q;
     ndoms = length(L);
     for i = 1 : ndoms
-        rP = bP - AP*xP;
+        rP = rPfun(xP);
         %omega = (rP'*rP) / (rP'*AP*rP);
         omega = 1.7;
         xP( blk(i):blk(i+1)-1 ) = xP( blk(i):blk(i+1)-1 ) ...

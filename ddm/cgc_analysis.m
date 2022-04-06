@@ -117,18 +117,18 @@ for i = 1 : 500
     % -------------
     % Online update
     % -------------
-    %xP = xP + omega * V'*(VAV\(V*rP)); % Coarse-space correction
+    %xP = xP + omega * V'*(VAV\(V*rP));    % Coarse-space correction
     %rP = bP - AP*xP;
     %omega = (rP'*rP) / (rP'*AP*rP);
-    %xP = xP + omega * blkjac(rP, BJ);  % Block Jacobi smoothing
-    %xP = blkgs(xP, BJ, AP, bP);        % Block GS smoothing
+    %xP = xP + omega * blkjac(rP, BJ);     % Block Jacobi smoothing
+    %xP = blkgs(xP, BJ, @(xP) bP - AP*xP); % Block GS smoothing
     %rP = bP - AP*xP;
     %omega = (rP'*rP) / (rP'*AP*rP);
-    %xP = xP + omega * V'*(VAV\(V*rP)); % Coarse-space correction
+    %xP = xP + omega * V'*(VAV\(V*rP));    % Coarse-space correction
     %rP = bP - AP*xP;
     %omega = (rP'*rP) / (rP'*AP*rP);
-    %xP = xP + omega * blkjac(rP, BJ);  % Block Jacobi smoothing
-    %xP = blkgs(xP, BJ, AP, bP);        % Block GS smoothing
+    %xP = xP + omega * blkjac(rP, BJ);     % Block Jacobi smoothing
+    %xP = blkgs(xP, BJ, @(xP) bP - AP*xP); % Block GS smoothing
     % -------------
     % Visualization
     % -------------
