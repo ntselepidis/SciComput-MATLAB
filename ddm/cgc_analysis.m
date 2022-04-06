@@ -82,10 +82,15 @@ Vt_pat = spones(V');
 VAV_zero_diag = VAV - diag(diag(VAV));
 VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
 
+% deflation
+P  = @(x) x - AP*(V'*(VAV\(V*x)));
+Pt = @(x) x - V'*(VAV\(V*(AP*x)));
+
 xP = zeros(length(A), 1);
 disp(['omega = ' num2str(omega)])
 for i = 1 : 500
     rP = bP - AP*xP;
+    %rP = P(rP); % deflation
     omega = (rP'*rP) / (rP'*AP*rP);
     relres = norm(rP) / norm(bP);
     disp([i omega relres])
@@ -98,6 +103,7 @@ for i = 1 : 500
     % -------------
     %eP = rP;
     %eP = blkjac(rP, BJ);
+    %eP = blkjac(P(rP), BJ); % deflation
     %eP = V'*(VAV\(V*rP));
     eP = blkjac(rP, BJ) + (V'*(VAV\(V*rP)));
     %eP = blkjac(rP, BJ) +  dmp * (V'*(VAV\(V*rP)));
@@ -123,6 +129,8 @@ for i = 1 : 500
     % Visualization
     % -------------
     %x(perm) = xP;
+    %x(perm) = Pt(xP); % deflation
+    %x(perm) = V'*(VAV\(V*bP)) + Pt(xP); % deflation
     %getframe; mesh(reshape(x, nx, nx))
 end
 
