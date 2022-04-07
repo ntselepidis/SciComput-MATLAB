@@ -113,6 +113,9 @@ for i = 1 : 500
     %omega = (rhatP'*rhatP) / (rhatP'*(AP*blkjac(P(rhatP), BJ))); % Block Jacobi + Deflation
     %omega = (rhatP'*rhatP) / (rhatP'*(AP*P(blkjac(rhatP, BJ)))); % Block Jacobi + Deflation
     %omega = (rhatP'*rhatP) / (rhatP'*(AP*(blkjac(rhatP, BJ) + V'*(VAV\(V*rhatP))))); % Block Jacobi + CGC
+    %y_ = blkjac(rhatP, BJ);
+    %rhatP_ = y_ - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y_))), BJ);
+    %omega = (rhatP'*rhatP) / (rhatP'*(AP*rhatP_)); % Add-then-invert
     xP = xP + omega * rhatP;
     % -------------
     % Online update

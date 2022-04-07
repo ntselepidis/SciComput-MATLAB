@@ -4,7 +4,7 @@ function R = aggregate(AP, blk)
     n = length(AP);
     R = spalloc(ndoms, n, n);
     for i = 1 : ndoms
-        R(i,blk(i):blk(i+1)-1) = 1;%/length(blk(i):blk(i+1)-1);
+        R(i,blk(i):blk(i+1)-1) = 1 / length(blk(i):blk(i+1)-1);
     end
     
 end
