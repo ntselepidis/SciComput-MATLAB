@@ -48,11 +48,20 @@ VAV = V*AP*V';
 %
 %(V*V')
 
+% deflation
+P  = @(x) x - AP*(V'*(VAV\(V*x)));
+Pt = @(x) x - V'*(VAV\(V*(AP*x)));
+
 % Preconditioned conjugate gradient on Ax = b, with preconditioner M
 %x = pcg( AP, bP, tol, maxit );                                          % No preconditioner
 %x = pcg( AP, bP, tol, maxit, @(y) blkjac(y,BJ) );                       % Block Jacobi
 %x = pcg( AP, bP, tol, maxit, @(y) blkjac(y,BJ) + V'*(VAV\(V*y)) );      % Block Jacobi + Nico
-%x = pcg( AP, bP, tol, maxit, @(y) blkjac(y,BJ) + 0.1*V'*(VAV\(V*y)) );  % Block Jacobi + damping * Nico
+%x = pcg( @(x) P(AP*x), P(bP), tol, maxit, @(y) blkjac(y, BJ) );         % Block Jacobi + deflation Nico
+%
+%x(perm) = V'*(VAV\(V*bP)) + Pt(x);
+%mesh(reshape(x, nx, nx))
+%
+%return
 
 % Preconditioned Richardson iteration (gradient descent)
 % x = x + M*(b - A*x), M is the preconditioner
@@ -81,10 +90,6 @@ Vt_vec = full(sum(V', 2));
 Vt_pat = spones(V');
 VAV_zero_diag = VAV - diag(diag(VAV));
 VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
-
-% deflation
-P  = @(x) x - AP*(V'*(VAV\(V*x)));
-Pt = @(x) x - V'*(VAV\(V*(AP*x)));
 
 xP = zeros(length(A), 1);
 disp(['omega = ' num2str(omega)])
