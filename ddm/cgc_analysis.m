@@ -6,9 +6,10 @@ tol = 1e-10; % Prescribed tolerance
 
 %nx = 10;
 nx = 32;
-A = gallery('poisson', nx);
-%A = -nine_point(nx+1);
-%A = poisson3D(nx);
+h = 1 / (nx+1);
+A = gallery('poisson', nx) / h^2;
+%A = -nine_point(nx+1) / (6*(h^2));
+%A = poisson3D(nx) / h^3;
 %ex = (1:length(A))'/length(A);
 %b = A*ex;
 b = ones(length(A), 1);
@@ -132,14 +133,14 @@ for i = 1 : 500
     %omega = (rP'*rP) / (rP'*AP*rP);
     %xP = xP + omega * blkjac(rP, BJ);     % Block Jacobi smoothing
     %xP = blkgs(xP, BJ, @(xP) bP - AP*xP); % Block GS smoothing
-    % -------------
-    % Visualization
-    % -------------
-    %x(perm) = xP;
-    %x(perm) = Pt(xP); % deflation
-    %x(perm) = V'*(VAV\(V*bP)) + Pt(xP); % deflation
-    %getframe; mesh(reshape(x, nx, nx))
 end
+% -------------
+% Visualization
+% -------------
+%x(perm) = xP;
+%x(perm) = Pt(xP); % deflation
+%x(perm) = V'*(VAV\(V*bP)) + Pt(xP); % deflation
+%mesh(reshape(x, nx, nx))
 
 return
 % Don't continue analysis if matrix is too large
