@@ -91,12 +91,20 @@ Vt_pat = spones(V');
 VAV_zero_diag = VAV - diag(diag(VAV));
 VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
 
+%prec = @(rP) rP;                                 % No preconditioner
+%prec = @(rP) blkjac(rP, BJ);                     % Block Jacobi
+%prec = @(rP) V'*(VAV\(V*rP));                    % CGC
+prec = @(rP) blkjac(rP, BJ) + (V'*(VAV\(V*rP))); % Block Jacobi + CGC
+%prec = @(rP) blkjac(rP, BJ) ...
+%    - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*blkjac(rP, BJ)))), BJ);
+%mesh = @(x) surf(x);
+
 xP = zeros(length(A), 1);
 disp(['omega = ' num2str(omega)])
 for i = 1 : 500
     rP = bP - AP*xP;
     %rP = P(rP); % deflation
-    omega = (rP'*rP) / (rP'*AP*rP);
+    %omega = (rP'*rP) / (rP'*AP*rP);
     relres = norm(rP) / norm(bP);
     disp([i omega relres])
     if (relres <= 1e-3)
@@ -106,21 +114,8 @@ for i = 1 : 500
     % -------------
     % Batch update
     % -------------
-    %rhatP = rP;
-    %rhatP = blkjac(rP, BJ);
-    %rhatP = blkjac(P(rP), BJ); % deflation
-    %rhatP = V'*(VAV\(V*rP));
-    rhatP = blkjac(rP, BJ) + (V'*(VAV\(V*rP)));
-    %rhatP = blkjac(rP, BJ) +  dmp * (V'*(VAV\(V*rP)));
-    %y = blkjac(rP, BJ);
-    %rhatP = y - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y))), BJ);
-    %omega = (rhatP'*rhatP) / (rhatP'*(AP*blkjac(rhatP, BJ))); % Block Jacobi
-    %omega = (rhatP'*rhatP) / (rhatP'*(AP*blkjac(P(rhatP), BJ))); % Block Jacobi + Deflation
-    %omega = (rhatP'*rhatP) / (rhatP'*(AP*P(blkjac(rhatP, BJ)))); % Block Jacobi + Deflation
-    %omega = (rhatP'*rhatP) / (rhatP'*(AP*(blkjac(rhatP, BJ) + V'*(VAV\(V*rhatP))))); % Block Jacobi + CGC
-    %y_ = blkjac(rhatP, BJ);
-    %rhatP_ = y_ - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*y_))), BJ);
-    %omega = (rhatP'*rhatP) / (rhatP'*(AP*rhatP_)); % Add-then-invert
+    rhatP = prec(rP);
+    omega = (rhatP'*rhatP) / (rhatP'*(AP*prec(rhatP)));
     xP = xP + omega * rhatP;
     % -------------
     % Online update
