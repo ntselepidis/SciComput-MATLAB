@@ -96,8 +96,8 @@ VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
 %prec = @(rP) blkjac(rP, BJ);                     % Block Jacobi
 %prec = @(rP) V'*(VAV\(V*rP));                    % CGC
 prec = @(rP) blkjac(rP, BJ) + (V'*(VAV\(V*rP))); % Block Jacobi + CGC
-%prec = @(rP) blkjac(rP, BJ) ...
-%    - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*blkjac(rP, BJ)))), BJ);
+%prec_helper = @(rhatP_) rhatP_ - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*rhatP_))), BJ);
+%prec = @(rP) prec_helper(blkjac(rP, BJ));        % Add-then-invert
 %mesh = @(x) surf(x);
 
 xP = zeros(length(A), 1);
