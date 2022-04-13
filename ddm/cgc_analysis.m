@@ -54,10 +54,15 @@ P  = @(x) x - AP*(V'*(VAV\(V*x)));
 Pt = @(x) x - V'*(VAV\(V*(AP*x)));
 
 % Preconditioned conjugate gradient on Ax = b, with preconditioner M
-%x = pcg( AP, bP, tol, maxit );                                          % No preconditioner
-%x = pcg( AP, bP, tol, maxit, @(y) blkjac(y,BJ) );                       % Block Jacobi
-%x = pcg( AP, bP, tol, maxit, @(y) blkjac(y,BJ) + V'*(VAV\(V*y)) );      % Block Jacobi + Nico
-%x = pcg( @(x) P(AP*x), P(bP), tol, maxit, @(y) blkjac(y, BJ) );         % Block Jacobi + deflation Nico
+%x = pcg( AP, bP, tol, maxit );                                                               % No preconditioner
+%x = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) );                                           % Block Jacobi
+%x = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) + V'*(VAV\(V*y)) );                          % Block Jacobi + CGC (additive)
+%x = pcg( AP, bP, tol, maxit, @(y) blkjac(P(y), BJ) + V'*(VAV\(V*y)) );                       % Block Jacobi + CGC (mult, CGC 1st)
+%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)) + V'*(VAV\(V*y)), [], V'*(VAV\(V*bP)) ); % Block Jacobi + CGC (mult, CGC 2nd)
+%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)) + V'*(VAV\(V*y)) );                   % BNN (single-step deflation)
+%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)), [], V'*(VAV\(V*bP)) );               % R-BNN1
+%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)), [], V'*(VAV\(V*bP)) );                  % R-BNN2
+%x = pcg( @(x) P(AP*x), P(bP), tol, maxit, @(y) blkjac(y, BJ) );                              % Block Jacobi + deflation
 %
 %x(perm) = V'*(VAV\(V*bP)) + Pt(x);
 %mesh(reshape(x, nx, nx))
@@ -92,12 +97,15 @@ Vt_pat = spones(V');
 VAV_zero_diag = VAV - diag(diag(VAV));
 VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
 
-%prec = @(rP) rP;                                 % No preconditioner
-%prec = @(rP) blkjac(rP, BJ);                     % Block Jacobi
-%prec = @(rP) V'*(VAV\(V*rP));                    % CGC
-prec = @(rP) blkjac(rP, BJ) + (V'*(VAV\(V*rP))); % Block Jacobi + CGC
+%prec = @(rP) rP;                                        % No preconditioner
+%prec = @(rP) blkjac(rP, BJ);                            % Block Jacobi
+%prec = @(rP) V'*(VAV\(V*rP));                           % CGC
+prec = @(rP) blkjac(rP, BJ) + (V'*(VAV\(V*rP)));        % Block Jacobi + CGC (additive)
+%prec = @(rP) blkjac(P(rP), BJ) + (V'*(VAV\(V*rP)));     % Block Jacobi + CGC (mult, CGC 1st)
+%prec = @(rP) Pt(blkjac(rP, BJ)) + (V'*(VAV\(V*rP)));    % Block Jacobi + CGC (mult, CGC 2nd)
+%prec = @(rP) Pt(blkjac(P(rP), BJ)) + (V'*(VAV\(V*rP))); % BNN (single-step deflation)
 %prec_helper = @(rhatP_) rhatP_ - blkjac(V'*(VAVc \ (VAV_zero_diag * (V*rhatP_))), BJ);
-%prec = @(rP) prec_helper(blkjac(rP, BJ));        % Add-then-invert
+%prec = @(rP) prec_helper(blkjac(rP, BJ));               % Add-then-invert
 %mesh = @(x) surf(x);
 
 xP = zeros(length(A), 1);
