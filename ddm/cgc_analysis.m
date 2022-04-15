@@ -35,6 +35,12 @@ bP = b(perm);
 V = aggregate(AP, blk);
 VAV = V*AP*V';
 
+% SHEM Coarse Space for block Jacobi
+%nbasis = 1;
+%[V, basis] = shem(A, In, Out, All, nbasis);
+%V = V(:, perm);
+%VAV = V*AP*V';
+
 %VAV2 = zeros(ndoms, ndoms);
 %for i = 1:ndoms
 %    ii = blk(i):blk(i+1)-1;
