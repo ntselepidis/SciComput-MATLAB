@@ -119,7 +119,6 @@ disp(['omega = ' num2str(omega)])
 for i = 1 : 500
     rP = bP - AP*xP;
     %rP = P(rP); % deflation
-    %omega = (rP'*rP) / (rP'*AP*rP);
     relres = norm(rP) / norm(bP);
     disp([i omega relres])
     if (relres <= 1e-3)
@@ -131,6 +130,7 @@ for i = 1 : 500
     % -------------
     rhatP = prec(rP);
     omega = (rhatP'*rhatP) / (rhatP'*(AP*prec(rhatP)));
+    %omega = (rP'*rhatP) / (rhatP'*AP*rhatP);
     xP = xP + omega * rhatP;
     % -------------
     % Online update
