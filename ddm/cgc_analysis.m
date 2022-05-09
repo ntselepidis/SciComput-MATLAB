@@ -1,5 +1,7 @@
 clear; close all;
 
+rand('seed', 0);
+
 ndoms = 32;  % Number of subdomains
 maxit = 500; % Maximum number of iterations for Krylov method
 tol = 1e-10; % Prescribed tolerance
@@ -16,7 +18,10 @@ b = ones(length(A), 1);
 
 % Partitioning
 G = 0.5*(abs(A)+abs(A)'); % undirected graph
-map = PartSparseMat(G,ndoms);
+%map = PartSparseMat(G,ndoms);
+[x_, y_]     = meshgrid(h:h:1-h); coo = [x_(:) y_(:)];
+%[x_, y_, z_] = meshgrid(h:h:1-h); coo = [x_(:) y_(:) z_(:)];
+map = kmeans(coo, ndoms);
 ndoms = max(map);
 
 % Classify subdomain components into inner and outer points
@@ -33,6 +38,34 @@ bP = b(perm);
 
 % Nicolaides coarse space for block Jacobi
 V = aggregate(AP, blk);
+
+% Eigenvectors of diagonal blocks of matrix AP
+%n = length(AP);
+%nbasis = 1;
+%V = spalloc(nbasis*ndoms, n, nbasis*n);
+%for i = 1:ndoms
+%    idx = blk(i):blk(i+1)-1;
+%    if nbasis > 1
+%        [eigvecs, eigvals] = eigs(AP(idx,idx), nbasis-1, 'sm');
+%    end
+%    V(nbasis*(i-1)+1, idx) = 1;% / length(blk(i):blk(i+1)-1);
+%    for j = 2:nbasis
+%        V(nbasis*(i-1)+j,idx) = eigvecs(:,j-1);
+%    end
+%end
+
+% Eigenvectors of full matrix AP
+%n = length(AP);
+%nbasis = 1;
+%[eigvec, eigval] = eigs(AP, nbasis, 'sm');
+%V = spalloc(nbasis*ndoms, n, nbasis*n);
+%for i = 1:ndoms
+%    idx = blk(i):blk(i+1)-1;
+%    for j = 1:nbasis
+%        V(nbasis*(i-1)+j,idx) = eigvec(idx,j);
+%    end
+%end
+
 VAV = V*AP*V';
 
 % SHEM Coarse Space for block Jacobi
@@ -59,7 +92,25 @@ VAV = V*AP*V';
 P  = @(x) x - AP*(V'*(VAV\(V*x)));
 Pt = @(x) x - V'*(VAV\(V*(AP*x)));
 
+% Preconditioned richardson iteration on Ax = b, with preconditioner M
+disp('')
+disp('Preconditioned richardson iteration')
+disp('')
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) y );                                                       % No preconditioner
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(y, BJ) );                                           % Block Jacobi
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(y, BJ) + V'*(VAV\(V*y)) );                          % Block Jacobi + CGC (additive)
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(P(y), BJ) + V'*(VAV\(V*y)) );                       % Block Jacobi + CGC (mult, CGC 1st)
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)) + V'*(VAV\(V*y)), [], V'*(VAV\(V*bP)) ); % Block Jacobi + CGC (mult, CGC 2nd)
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)) + V'*(VAV\(V*y)) );                   % BNN (single-step deflation)
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)), [], V'*(VAV\(V*bP)) );               % R-BNN1
+x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)), [], V'*(VAV\(V*bP)) );                  % R-BNN2
+x = richardson( @(y) P(AP*y), P(bP), tol, maxit, @(y) blkjac(y, BJ), [] );                                 % Block Jacobi + deflation
+return
+
 % Preconditioned conjugate gradient on Ax = b, with preconditioner M
+%disp('')
+%disp('Preconditioned conjugate gradient')
+%disp('')
 %x = pcg( AP, bP, tol, maxit );                                                               % No preconditioner
 %x = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) );                                           % Block Jacobi
 %x = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) + V'*(VAV\(V*y)) );                          % Block Jacobi + CGC (additive)
@@ -101,7 +152,8 @@ omega = 0.6376; % BJ+CGC
 Vt_vec = full(sum(V', 2));
 Vt_pat = spones(V');
 VAV_zero_diag = VAV - diag(diag(VAV));
-VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
+%VAVc = speye(ndoms) + VAV_zero_diag * ( V*( blkjac(Vt_vec, BJ).*Vt_pat ) );
+%VAVc = speye(ndoms) + VAV_zero_diag * ( V*sparse( blkjac(Vt_vec, BJ).*full(Vt_pat) ) );
 
 %prec = @(rP) rP;                                        % No preconditioner
 %prec = @(rP) blkjac(rP, BJ);                            % Block Jacobi
