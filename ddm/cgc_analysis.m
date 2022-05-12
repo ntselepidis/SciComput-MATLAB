@@ -96,15 +96,23 @@ Pt = @(x) x - V'*(VAV\(V*(AP*x)));
 disp('')
 disp('Preconditioned richardson iteration')
 disp('')
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) y );                                                       % No preconditioner
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(y, BJ) );                                           % Block Jacobi
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(y, BJ) + V'*(VAV\(V*y)) );                          % Block Jacobi + CGC (additive)
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(P(y), BJ) + V'*(VAV\(V*y)) );                       % Block Jacobi + CGC (mult, CGC 1st)
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)) + V'*(VAV\(V*y)), [], V'*(VAV\(V*bP)) ); % Block Jacobi + CGC (mult, CGC 2nd)
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)) + V'*(VAV\(V*y)) );                   % BNN (single-step deflation)
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)), [], V'*(VAV\(V*bP)) );               % R-BNN1
-x = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)), [], V'*(VAV\(V*bP)) );                  % R-BNN2
-x = richardson( @(y) P(AP*y), P(bP), tol, maxit, @(y) blkjac(y, BJ), [] );                                 % Block Jacobi + deflation
+maxit = 100;
+[x, val0] = richardson( @(y) AP*y, bP, tol, maxit, @(y) y );                                                       % No preconditioner
+[x, val1] = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(y, BJ) );                                           % Block Jacobi
+[x, val2] = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(y, BJ) + V'*(VAV\(V*y)) );                          % Block Jacobi + CGC (additive)
+[x, val3] = richardson( @(y) AP*y, bP, tol, maxit, @(y) blkjac(P(y), BJ) + V'*(VAV\(V*y)) );                       % Block Jacobi + CGC (mult, CGC 1st)
+[x, val4] = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)) + V'*(VAV\(V*y)), [], V'*(VAV\(V*bP)) ); % Block Jacobi + CGC (mult, CGC 2nd)
+[x, val5] = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)) + V'*(VAV\(V*y)) );                   % BNN (single-step deflation)
+[x, val6] = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)), [], V'*(VAV\(V*bP)) );               % R-BNN1
+[x, val7] = richardson( @(y) AP*y, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)), [], V'*(VAV\(V*bP)) );                  % R-BNN2
+[x, val8] = richardson( @(y) P(AP*y), P(bP), tol, maxit, @(y) blkjac(y, BJ), [] );                                 % Block Jacobi + deflation
+figure, grid, hold,
+plot(val0, 'linewidth', 2, 'k')
+plot(val1, 'linewidth', 2, 'b')
+plot(val2, 'linewidth', 2, 'r')
+%plot(val3, 'linewidth', 2, 'm')
+%plot(val4, 'linewidth', 2, 'c')
+plot(val5, 'linewidth', 2, 'g')
 return
 
 % Preconditioned conjugate gradient on Ax = b, with preconditioner M
@@ -181,8 +189,8 @@ for i = 1 : 500
     % Batch update
     % -------------
     rhatP = prec(rP);
-    omega = (rhatP'*rhatP) / (rhatP'*(AP*prec(rhatP)));
-    %omega = (rP'*rhatP) / (rhatP'*AP*rhatP);
+    %omega = (rhatP'*rhatP) / (rhatP'*(AP*prec(rhatP)));
+    omega = (rP'*rhatP) / (rhatP'*AP*rhatP);
     xP = xP + omega * rhatP;
     % -------------
     % Online update
