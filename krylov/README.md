@@ -1,4 +1,4 @@
-# Pipelined Krylov Methods
+# Krylov Subspace Methods
 * `pipelined_bicgstab.m:` Implements pipelined bicgstab method (see reference [paper](https://www.sciencedirect.com/science/article/pii/S0167819117300406))
 
 #### Reference

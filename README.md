@@ -9,12 +9,12 @@ SciComput-MATLAB
 ├── fdm                  <-- Finite Difference Method
 ├── fem                  <-- Finite Element Method
 ├── integration          <-- Numerical Integration Methods
+├── krylov               <-- Krylov Subspace Methods
 ├── low_rank_approx      <-- Low-Rank Matrix Approximation Methods
 ├── meshless             <-- Meshless Method
 ├── multigrid            <-- Multigrid Method
 ├── newton_krylov        <-- Newton-Krylov Method
 ├── nystrom              <-- Nystrom Method
-├── pipelined_krylov     <-- Pipelined Krylov Methods
 └── spai                 <-- Sparse Approximate Inverse
 ```
 ### Documentation
