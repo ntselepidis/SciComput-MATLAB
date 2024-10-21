@@ -113,22 +113,36 @@ plot(val2, 'linewidth', 2, 'r')
 %plot(val3, 'linewidth', 2, 'm')
 %plot(val4, 'linewidth', 2, 'c')
 plot(val5, 'linewidth', 2, 'g')
+%plot(val6, 'linewidth', 2, 'gx')
+%plot(val7, 'linewidth', 2, 'co')
+%plot(val8, 'linewidth', 2, 'k--')
 return
 
 % Preconditioned conjugate gradient on Ax = b, with preconditioner M
 %disp('')
 %disp('Preconditioned conjugate gradient')
 %disp('')
-%x = pcg( AP, bP, tol, maxit );                                                               % No preconditioner
-%x = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) );                                           % Block Jacobi
-%x = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) + V'*(VAV\(V*y)) );                          % Block Jacobi + CGC (additive)
-%x = pcg( AP, bP, tol, maxit, @(y) blkjac(P(y), BJ) + V'*(VAV\(V*y)) );                       % Block Jacobi + CGC (mult, CGC 1st)
-%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)) + V'*(VAV\(V*y)), [], V'*(VAV\(V*bP)) ); % Block Jacobi + CGC (mult, CGC 2nd)
-%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)) + V'*(VAV\(V*y)) );                   % BNN (single-step deflation)
-%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)), [], V'*(VAV\(V*bP)) );               % R-BNN1
-%x = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)), [], V'*(VAV\(V*bP)) );                  % R-BNN2
-%x = pcg( @(x) P(AP*x), P(bP), tol, maxit, @(y) blkjac(y, BJ) );                              % Block Jacobi + deflation
-%
+%[x, ~, ~, ~, val0] = pcg( AP, bP, tol, maxit );                                                               % No preconditioner
+%[x, ~, ~, ~, val1] = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) );                                           % Block Jacobi
+%[x, ~, ~, ~, val2] = pcg( AP, bP, tol, maxit, @(y) blkjac(y, BJ) + V'*(VAV\(V*y)) );                          % Block Jacobi + CGC (additive)
+%[x, ~, ~, ~, val3] = pcg( AP, bP, tol, maxit, @(y) blkjac(P(y), BJ) + V'*(VAV\(V*y)) );                       % Block Jacobi + CGC (mult, CGC 1st)
+%[x, ~, ~, ~, val4] = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)) + V'*(VAV\(V*y)), [], V'*(VAV\(V*bP)) ); % Block Jacobi + CGC (mult, CGC 2nd)
+%[x, ~, ~, ~, val5] = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)) + V'*(VAV\(V*y)) );                   % BNN (single-step deflation)
+%[x, ~, ~, ~, val6] = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(P(y), BJ)), [], V'*(VAV\(V*bP)) );               % R-BNN1
+%[x, ~, ~, ~, val7] = pcg( AP, bP, tol, maxit, @(y) Pt(blkjac(y, BJ)), [], V'*(VAV\(V*bP)) );                  % R-BNN2
+%[x, ~, ~, ~, val8] = pcg( @(x) P(AP*x), P(bP), tol, maxit, @(y) blkjac(y, BJ) );                              % Block Jacobi + deflation
+%figure, grid, hold,
+%plot(log2(val0), 'linewidth', 2, 'k')
+%plot(log2(val1), 'linewidth', 2, 'b')
+%plot(log2(val2), 'linewidth', 2, 'r')
+%plot(log2(val3), 'linewidth', 2, 'm')
+%plot(log2(val4), 'linewidth', 2, 'c')
+%plot(log2(val5), 'linewidth', 2, 'g')
+%plot(log2(val6), 'linewidth', 2, 'gx')
+%plot(log2(val7), 'linewidth', 2, 'co')
+%plot(log2(val8), 'linewidth', 2, 'k--')
+%return
+
 %x(perm) = V'*(VAV\(V*bP)) + Pt(x);
 %mesh(reshape(x, nx, nx))
 %
