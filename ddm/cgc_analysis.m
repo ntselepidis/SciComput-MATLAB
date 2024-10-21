@@ -79,12 +79,12 @@ VAV = V*AP*V';
 %    ii = blk(i):blk(i+1)-1;
 %    for j = 1:ndoms
 %        jj = blk(j):blk(j+1)-1;
-%        VAV2(i,j) = sum(AP(ii,jj), 'all') / (sqrt(length(ii)) * sqrt(length(jj)));
+%        VAV2(i,j) = sum(sum(AP(ii,jj))) / (sqrt(length(ii)) * sqrt(length(jj)));
 %    end
-%    Vb(i) = sum(bP(ii), 'all') / sqrt(length(ii));
+%    Vb(i) = sum(bP(ii)) / sqrt(length(ii));
 %end
-%max(abs(sparse(VAV2) - VAV), [], 'all')
-%max(abs(Vb - V*b), [], 'all')
+%max(max(abs(sparse(VAV2) - VAV)))
+%max(max(abs(Vb - V*b)))
 %
 %(V*V')
 

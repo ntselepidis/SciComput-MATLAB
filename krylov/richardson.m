@@ -15,6 +15,7 @@ function [x, val_record] = richardson(A, b, tol, maxit, M, dummy, x0)
     for i = 1 : maxit
         Ap = A(p);
         %alpha = (p'*p) / (p'*(A(M(p))));
+        %alpha = (p'*p) / (p'*(M(Ap)));
         alpha = (r'*p) / (p'*Ap);
         x = x + alpha*p;
         r = r - alpha*Ap;
