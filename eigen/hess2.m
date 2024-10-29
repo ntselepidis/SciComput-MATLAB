@@ -4,6 +4,7 @@ function H = hess2(A)
         error('Matrix must be square');
     end
     H = A;
+    %P = eye(size(A));
     for k = 1:n-2
         x = H(k+1:n, k);
         e1 = eye(length(x), 1);
@@ -20,5 +21,6 @@ function H = hess2(A)
 
         H(k+1:n, k:n) = H(k+1:n, k:n) - (2*u)*(u'*H(k+1:n, k:n));
         H(1:n, k+1:n) = H(1:n, k+1:n) - (H(1:n, k+1:n)*u)*(2*u)';
+        %P(1:n, k+1:n) = P(1:n, k+1:n) - (P(1:n, k+1:n)*u)*(2*u)';
     end
 end
