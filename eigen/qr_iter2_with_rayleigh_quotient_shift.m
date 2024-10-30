@@ -3,14 +3,16 @@ function [Qp,T]=qr_iter2_with_rayleigh_quotient_shift(H,tol,maxit)
 Qp=eye(n,n); % Qp = Q(1)*Q(2)*...*Q(maxit).
 k=0;
 iters=0;
+maxit_inner = floor(maxit / n);
+%maxit_inner = n;
 for m=n:-1:2
-    while (1)
+    for iter_inner = 1 : maxit_inner
         k = k + 1;
         sigma_k = H(m,m);
-        [Q,H] = hess_qr(H - sigma_k*eye(n,n)); % H = QR, Hbar = RQ, H = Hbar, in-place
-        H = H + sigma_k*eye(n,n);
-        Qp = Qp*Q;
-        if ( norm(H(m,m-1))<tol )
+        [~,H(1:m,1:m)] = hess_qr(H(1:m,1:m) - sigma_k*eye(m,m)); % H = QR, Hbar = RQ, H = Hbar, in-place
+        H(1:m,1:m) = H(1:m,1:m) + sigma_k*eye(m,m);
+        %Qp = Qp*Q;
+        if ( abs(H(m,m-1)/H(m,m))<tol )
             iters=iters+k;
             break;
         end

@@ -14,7 +14,9 @@ function H = hess2(A)
         else
             sn = -1;
         end
-        %sn = exp(j*angle(x(1)));
+        if iscomplex(A)
+            sn = exp(j*angle(x(1)));
+        end
 
         u = sn*norm(x)*e1+x;
         u = u / norm(u);

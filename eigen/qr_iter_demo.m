@@ -6,14 +6,14 @@ A = [8 0.25 0.5 2 -1;
      2 1 0.75 5 -0.5; 
      -1 2 -1 -0.5 6];
 
-%rng(0);
-%n = 5;
-%A = rand(n,n) + rand(n,n)*i;
+rng(0);
+n = 20;
+A = rand(n,n) + rand(n,n)*i;
 %A = 0.5*(A+A');
 
 flag = 1;
 maxit = 500;
-tol = 1e-16;
+tol = 1e-10;
 hessenberg_reduction = 1;
 shift = 1;
 
@@ -22,7 +22,7 @@ if (hessenberg_reduction == 0)
     [vec_approx,val_approx]=qr_iter(A,tol,maxit);
 else
     disp('Performing Hessenberg reduction ...')
-    [P, H1] = hess(A);
+    %[P, H1] = hess(A);
     H = hess2(A);
 %    H1, H
 %    abs(H1), abs(H)
