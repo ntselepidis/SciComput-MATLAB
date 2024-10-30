@@ -9,7 +9,7 @@ for m=n:-1:2
         [~,H(1:m,1:m)] = hess_qr(H(1:m,1:m) - sigma_k*eye(m,m)); % H = QR, Hbar = RQ, H = Hbar, in-place
         H(1:m,1:m) = H(1:m,1:m) + sigma_k*eye(m,m);
         %Qp = Qp*Q;
-        if ( abs(H(m,m-1)/H(m,m))<tol )
+        if ( abs(H(m,m-1))<tol )
             iters=iters+iter_inner;
             break;
         end
