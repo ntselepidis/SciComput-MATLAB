@@ -95,35 +95,87 @@ deg = deg(deg>1);
 
 % serial B and Bd computation
 B = spalloc(sum(deg-1), length(p), sum( 2*(deg-1) ));
+Bd = spalloc(sum(deg-1), length(p), sum( deg.*(deg-1) ));
 idx = 1;
 for i = 1:length(s)
     ind = find(p==s(i));
+    count = 1;
     for j = 1:deg(i)-1
         B(idx,ind(j)) = 1;
         B(idx,ind(j+1)) = -1;
+        for k = 1 : j
+            Bd(idx,ind(k)) = 1-count/deg(i);
+        end
+        for k = j+1 : length(ind)
+            Bd(idx,ind(k)) = -count/deg(i);
+        end
+        count = count+1;
         idx = idx+1;
     end
 end
 
 Bc = cell(ndoms,1);
+Bdc = cell(ndoms,1);
 for i = 1:ndoms
-    Bc{i} = B(:,blk(i):blk(i+1)-1);
+    idx = blk(i):blk(i+1)-1;
+    Bc{i} = B(:,idx);
+    Bdc{i} = Bd(:,idx);
 end
 
-nl = size(B,1);
-S = zeros(nl,nl);
-g = zeros(nl,1);
-for i = 1:ndoms
-    S = S + Bc{i} * ( Ac{i} \ Bc{i}' );
-    g = g + Bc{i} * ( Ac{i} \ bc{i}  );
-end
+%nl = size(B,1);
+%S = zeros(nl,nl);
+%g = zeros(nl,1);
+%for i = 1:ndoms
+%    S = S + Bc{i} * ( Ac{i} \ Bc{i}' );
+%    g = g + Bc{i} * ( Ac{i} \ bc{i}  );
+%end
+
 % AA = blkdiag(Ac{:});
 % lambda = pcg(-S, -g, 1e-10, 100);
 % lambda = pcg(-S, -g, 1e-10, 100, @(y) -B*(AA*(B'*y)));
-lambda = S\g;
+% lambda = S\g;
 % lambda = 0*lambda;
+
+% Reorder based on In and Out
+Lin = cell(ndoms,1);
+Lout = cell(ndoms,1);
+reord = cell(ndoms,1);
+Sc = cell(ndoms,1);
+Bdco = cell(ndoms,1);
+for i = 1 : ndoms
+    % Find local in and out points
+    [~, Lout{i}] = find(Bc{i});
+    Lout{i} = unique(Lout{i});
+    Lin{i} = setdiff((1:length(Ac{i}))', Lout{i});
+
+    % Compute local Schur complements and slice Bdc
+    Sc{i} = Ac{i}(Lout{i}, Lout{i}) - Ac{i}(Lout{i}, Lin{i}) * ( Ac{i}(Lin{i}, Lin{i}) \ Ac{i}(Lin{i}, Lout{i}) );
+    Bdco{i} = Bdc{i}(:, Lout{i});
+
+    % Reorder data in place
+    reord{i} = [Lin{i}; Lout{i}];
+    All{i} = All{i}(reord{i});
+    Ac{i} = Ac{i}(reord{i}, reord{i});
+    Bc{i} = Bc{i}(:, reord{i});
+    Bdc{i} = Bdc{i}(:, reord{i});
+    bc{i} = bc{i}(reord{i});
+end
+
+% Factorize domains
+[L, U, P, Q] = feti_factorize(Ac);
+[FETI.L, FETI.U, FETI.P, FETI.Q] = deal(L, U, P, Q);
+
+% Setup FETI struct
+[FETI.Ac, FETI.Bc, FETI.Bdc, FETI.Sc, FETI.Bdco] = deal(Ac, Bc, Bdc, Sc, Bdco);
+
+% Run PCG
+%lambda = pcg(@(x) feti_Smultx(x, FETI), feti_Srhs(bc, FETI), 1e-10, 100);
+lambda = pcg(@(x) feti_Smultx(x, FETI), feti_Srhs(bc, FETI), 1e-10, 100, @(x) feti_prec(x, FETI));
+
+% Backsolve
 for i = 1:ndoms
-    xc{i} = Ac{i} \ ( bc{i} - Bc{i}'*lambda ); 
+    %xc{i} = Ac{i} \ ( bc{i} - Bc{i}'*lambda ); 
+    xc{i} = sp_solve(L{i}, U{i}, P{i}, Q{i}, bc{i} - Bc{i}'*lambda); 
 end
 
 x = zeros(n,1);
