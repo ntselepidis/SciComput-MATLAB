@@ -4,9 +4,10 @@ clear; clc; close all; %rng(1);
 f = 0*5e8;    % if f = 0 then Helmholtz -> Poisson
 
 m = 64;       % number of subintervals per dimension
-ndoms = 8;    % number of subdomains
+ndoms = 16;    % number of subdomains
 fem_type = 0; % 0 -> triangular elements, 1 -> square elements
 lshape = 1;   % 0 -> square domain, 1-> L-shape domain
+lumped = 0;
 
 % discretize domain
 if ( fem_type )
@@ -50,6 +51,7 @@ bc = cell(ndoms,1);     % subdomain rhs vectors
 xc = cell(ndoms,1);     % subdomain solution vectors
 blk = zeros(ndoms+1,1); % subdomain index bounds
 blk(1) = 1;
+has_dirichlet = false(ndoms,1);
 
 % assemble subdomain stiffness matrices
 for i = 1:ndoms
@@ -77,6 +79,7 @@ for i = 1:ndoms
     % remove boundaries ( dirichlet (0) )
     dbnds = mapp(bounds);
     dbnds = dbnds(dbnds>0);
+    has_dirichlet(i) = ~isempty(dbnds); % for determining floating subdomains
     Ac{i}(dbnds,:) = [];
     Ac{i}(:,dbnds) = [];
     bc{i}(dbnds) = [];
@@ -149,7 +152,11 @@ for i = 1 : ndoms
     Lin{i} = setdiff((1:length(Ac{i}))', Lout{i});
 
     % Compute local Schur complements and slice Bdc
-    Sc{i} = Ac{i}(Lout{i}, Lout{i}) - Ac{i}(Lout{i}, Lin{i}) * ( Ac{i}(Lin{i}, Lin{i}) \ Ac{i}(Lin{i}, Lout{i}) );
+    if ~lumped
+        Sc{i} = Ac{i}(Lout{i}, Lout{i}) - Ac{i}(Lout{i}, Lin{i}) * ( Ac{i}(Lin{i}, Lin{i}) \ Ac{i}(Lin{i}, Lout{i}) );
+    else
+        Sc{i} = Ac{i}(Lout{i}, Lout{i});
+    end
     Bdco{i} = Bdc{i}(:, Lout{i});
 
     % Reorder data in place
@@ -161,21 +168,72 @@ for i = 1 : ndoms
     bc{i} = bc{i}(reord{i});
 end
 
+% Floating subdomains: scalar Poisson rigid-body modes
+R = cell(ndoms,1);
+for i = 1:ndoms
+    if ~has_dirichlet(i)
+        R{i} = ones(length(All{i}),1);
+        R{i} = R{i}/norm(R{i});
+    else
+        R{i} = zeros(length(All{i}),0);
+    end
+end
+
+% FETI coarse/nullspace matrix G = B R
+G = [];
+for i = 1:ndoms
+    if ~isempty(R{i})
+        G = [G, Bc{i}*R{i}];
+    end
+end
+
+FETI.floating = ~has_dirichlet;
+FETI.R = R;
+FETI.G = G;
+
 % Factorize domains
-[L, U, P, Q] = feti_factorize(Ac);
+[L, U, P, Q] = feti_factorize(Ac, FETI);
 [FETI.L, FETI.U, FETI.P, FETI.Q] = deal(L, U, P, Q);
 
 % Setup FETI struct
 [FETI.Ac, FETI.Bc, FETI.Bdc, FETI.Sc, FETI.Bdco] = deal(Ac, Bc, Bdc, Sc, Bdco);
 
+Z = @(x) feti_project(x, FETI);
+projected_matvec = @(x) Z(feti_Smultx(Z(x), FETI));
+projected_precon = @(x) Z(feti_prec(x, FETI));
+projected_rhs = Z(feti_Srhs(bc, FETI));
+
 % Run PCG
 %lambda = pcg(@(x) feti_Smultx(x, FETI), feti_Srhs(bc, FETI), 1e-10, 100);
-lambda = pcg(@(x) feti_Smultx(x, FETI), feti_Srhs(bc, FETI), 1e-10, 100, @(x) feti_prec(x, FETI));
+%lambda = pcg(@(x) feti_Smultx(x, FETI), feti_Srhs(bc, FETI), 1e-10, 100, @(x) feti_prec(x, FETI));
+lambda = pcg(@(x) projected_matvec(x), projected_rhs, 1e-10, 100, @(x) projected_precon(x));
 
 % Backsolve
 for i = 1:ndoms
     %xc{i} = Ac{i} \ ( bc{i} - Bc{i}'*lambda ); 
-    xc{i} = sp_solve(L{i}, U{i}, P{i}, Q{i}, bc{i} - Bc{i}'*lambda); 
+    %xc{i} = sp_solve(L{i}, U{i}, P{i}, Q{i}, bc{i} - Bc{i}'*lambda); 
+    xc{i} = feti_local_solve(i, bc{i} - Bc{i}'*lambda, FETI); 
+end
+
+if ~isempty(G)
+    % Fix floating subdomain jumps
+    % 1. Compute interface mismatch
+    jump = zeros(size(lambda));
+    for i = 1:ndoms
+        jump = jump + Bc{i}*xc{i};
+    end
+
+    % 2. Find best alpha
+    alpha = -(G'*G)\(G'*jump);
+
+    % 3. Add constants to shift floating subdomains
+    col = 0;
+    for i = 1:ndoms
+        if FETI.floating(i)
+            col = col + 1;
+            xc{i} = xc{i} + R{i}*alpha(col);
+        end
+    end
 end
 
 x = zeros(n,1);
@@ -185,3 +243,7 @@ end
 
 figure, trimesh(con, coo(:,1), coo(:,2), x), % plot solution
 title(sprintf('Solution of Helmholtz PDE for f = %e',f));
+
+xx=vertcat(xc{:});
+BB=horzcat(Bc{:});
+norm(BB*xx)
