@@ -96,26 +96,7 @@ end
 s = find(deg>1);
 deg = deg(deg>1);
 
-% serial B and Bd computation
-B = spalloc(sum(deg-1), length(p), sum( 2*(deg-1) ));
-Bd = spalloc(sum(deg-1), length(p), sum( deg.*(deg-1) ));
-idx = 1;
-for i = 1:length(s)
-    ind = find(p==s(i));
-    count = 1;
-    for j = 1:deg(i)-1
-        B(idx,ind(j)) = 1;
-        B(idx,ind(j+1)) = -1;
-        for k = 1 : j
-            Bd(idx,ind(k)) = 1-count/deg(i);
-        end
-        for k = j+1 : length(ind)
-            Bd(idx,ind(k)) = -count/deg(i);
-        end
-        count = count+1;
-        idx = idx+1;
-    end
-end
+[B, Bd] = assemble_B(s, deg, p);
 
 Bc = cell(ndoms,1);
 Bdc = cell(ndoms,1);
