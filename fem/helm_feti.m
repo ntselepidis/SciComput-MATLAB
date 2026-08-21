@@ -1,4 +1,4 @@
-clear; clc; close all; %rng(1);
+clear; clc; close all; rand ('seed', 1); %rng(1);
 [a, b] = deal(0, 1);
 
 f = 0*5e8;    % if f = 0 then Helmholtz -> Poisson
@@ -28,7 +28,7 @@ for i = 1:ne
     yc = sum( coo( con(i,:), 2 ) ) / size(con,2);
     ce(i,:) = [xc yc];
 end
-part = kmeans(ce, ndoms); % domain partitioning
+part = kmeans(ce, ndoms, 'MaxIter', 200); % domain partitioning
 
 % plot partitioning
 clr = ['b' 'r' 'g' 'c' 'm' 'y']';
@@ -181,9 +181,11 @@ end
 
 % FETI coarse/nullspace matrix G = B R
 G = [];
+e = [];
 for i = 1:ndoms
     if ~isempty(R{i})
         G = [G, Bc{i}*R{i}];
+        e = [e; R{i}'*bc{i}];
     end
 end
 
@@ -192,26 +194,36 @@ FETI.R = R;
 FETI.G = G;
 
 % Factorize domains
-[L, U, P, Q] = feti_factorize(Ac, FETI);
-[FETI.L, FETI.U, FETI.P, FETI.Q] = deal(L, U, P, Q);
+[FETI.L, FETI.U, FETI.P, FETI.Q] = feti_factorize(Ac, FETI);
 
 % Setup FETI struct
 [FETI.Ac, FETI.Bc, FETI.Bdc, FETI.Sc, FETI.Bdco] = deal(Ac, Bc, Bdc, Sc, Bdco);
 
-Z = @(x) feti_project(x, FETI);
-projected_matvec = @(x) Z(feti_Smultx(Z(x), FETI));
-projected_precon = @(x) Z(feti_prec(x, FETI));
-projected_rhs = Z(feti_Srhs(bc, FETI));
+if isempty(G)
+    P = @(x) x
+    lambda0 = zeros(size(Bc{1}, 1), 1);
+    projected_rhs = P(feti_Srhs(bc, FETI));
+else
+    GG = (G'*G);
+    P = @(x) x - G * (GG \ (G'*x));
+    lambda0 = G * ((G'*G) \ e);
+    projected_rhs = P(feti_Srhs(bc, FETI) - feti_Smultx(lambda0, FETI));
+end
 
-% Run PCG
-%lambda = pcg(@(x) feti_Smultx(x, FETI), feti_Srhs(bc, FETI), 1e-10, 100);
-%lambda = pcg(@(x) feti_Smultx(x, FETI), feti_Srhs(bc, FETI), 1e-10, 100, @(x) feti_prec(x, FETI));
-lambda = pcg(@(x) projected_matvec(x), projected_rhs, 1e-10, 100, @(x) projected_precon(x));
+projected_matvec = @(x) P(feti_Smultx(P(x), FETI));
+projected_precon = @(x) P(feti_prec(x, FETI));
+
+% Run PCG for Poisson and full GMRES for Helmholtz
+if (f == 0)
+    lambda = pcg(@(x) projected_matvec(x), projected_rhs, 1e-10, 100, @(x) projected_precon(x));
+else
+    lambda = gmres(@(x) projected_matvec(x), projected_rhs, [], 1e-10, 120, @(x) projected_precon(x));
+end
+
+lambda = lambda0 + lambda;
 
 % Backsolve
 for i = 1:ndoms
-    %xc{i} = Ac{i} \ ( bc{i} - Bc{i}'*lambda ); 
-    %xc{i} = sp_solve(L{i}, U{i}, P{i}, Q{i}, bc{i} - Bc{i}'*lambda); 
     xc{i} = feti_local_solve(i, bc{i} - Bc{i}'*lambda, FETI); 
 end
 
@@ -244,6 +256,12 @@ end
 figure, trimesh(con, coo(:,1), coo(:,2), x), % plot solution
 title(sprintf('Solution of Helmholtz PDE for f = %e',f));
 
+% Check continuity
 xx=vertcat(xc{:});
 BB=horzcat(Bc{:});
 norm(BB*xx)
+
+if ~isempty(G)
+    % Check compatibility
+    norm(G'*lambda0 - e)
+end
